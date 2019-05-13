@@ -14,3 +14,17 @@
 $app->get('/', function () use ($app) {
     return $app->version();
 });
+
+$app->post(
+    'auth/login', [ 'uses' => 'AuthController@authenticateByEmail']
+);
+
+// JWT protected routes
+$app->group(['middleware' => 'jwt.auth'], function() use ($app) {
+
+    // get all users, TODO: this is only an experiment
+    $app->get('users', function() {
+        $users = \App\User::all();
+        return response()->json($users);
+    });
+});
