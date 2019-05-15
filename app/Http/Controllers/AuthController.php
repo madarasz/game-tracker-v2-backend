@@ -48,7 +48,8 @@ class AuthController extends Controller
             return response()->json([
                 'token' => $this->jwt($user),
                 'userId' => $user->id,
-                'isAdmin' => $user->is_admin
+                'isAdmin' => $user->is_admin,
+                'userName' => $user->name
             ], 200);
         }
 
