@@ -39,7 +39,7 @@ class AuthController extends Controller
         $user = User::where('email', $this->request->input('email'))->first();
         if (!$user) {
             return response()->json([
-                'error' => 'Email does not exist.'
+                'error' => 'Email or password is wrong.'
             ], 400);
         }
 
