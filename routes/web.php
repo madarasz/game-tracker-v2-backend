@@ -15,9 +15,11 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
-$app->post(
-    'api/auth/login', [ 'uses' => 'AuthController@authenticateByEmail']
-);
+// login
+$app->post('api/auth/login', ['uses' => 'AuthController@authenticateByEmail']);
+
+// get public teams
+$app->get('api/teams/public', ['uses' => 'TeamController@listPublicTeams']);
 
 // JWT protected routes
 $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
