@@ -18,8 +18,8 @@ $app->get('/', function () use ($app) {
 // login
 $app->post('api/auth/login', ['uses' => 'AuthController@authenticateByEmail']);
 
-// get public teams
-$app->get('api/teams', ['uses' => 'TeamController@listTeams']);
+// get groups
+$app->get('api/groups', ['uses' => 'GroupController@listGroups']);
 
 // JWT protected routes
 $app->group(['middleware' => 'jwt.auth'], function() use ($app) {

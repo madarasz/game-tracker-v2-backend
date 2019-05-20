@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class TeamSeeder extends Seeder
+class GroupSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,6 +11,6 @@ class TeamSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Team::class, 10)->create();
+        factory(App\Group::class, 10)->create();
     }
 }

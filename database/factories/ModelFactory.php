@@ -18,9 +18,9 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'password' => app('hash')->make('pass')
     ];
 });
-$factory->define(App\Team::class, function (Faker\Generator $faker) {
+$factory->define(App\Group::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->company,
-        'is_public' => true
+        'is_public' => $faker->boolean(50)
     ];
 });
