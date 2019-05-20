@@ -13,7 +13,8 @@ class GroupController extends Controller
     // List all Groups
     function listGroups(Request $request) {
         // user auth
-        $token = $request->get('token');
+        $token = $request->header('Authorization');
+        $token = substr($token, 7-strlen($token));
         $credentials = null;
         try {
             $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
