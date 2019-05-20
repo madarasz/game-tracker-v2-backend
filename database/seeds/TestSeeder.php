@@ -27,5 +27,37 @@ class TestSeeder extends Seeder
             'is_admin' => true,
             'password' => app('hash')->make('pass')
         ]);
+        // test teams
+        DB::table('groups')->insert([
+            'id' => 1,
+            'name' => 'Public Group A',
+            'is_public' => true
+        ]);
+        DB::table('groups')->insert([
+            'id' => 2,
+            'name' => 'Public Group B',
+            'is_public' => true
+        ]);
+        DB::table('groups')->insert([
+            'id' => 3,
+            'name' => 'Private Group A',
+            'is_public' => false
+        ]);
+        DB::table('groups')->insert([
+            'id' => 4,
+            'name' => 'Private Group B',
+            'is_public' => false
+        ]);
+        // team memberships
+        DB::table('group_user')->insert([
+            'user_id' => 1,
+            'group_id' => 1,
+            'is_admin' => true
+        ]);
+        DB::table('group_user')->insert([
+            'user_id' => 1,
+            'group_id' => 3,
+            'is_admin' => false
+        ]);
     }
 }

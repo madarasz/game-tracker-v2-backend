@@ -13,8 +13,8 @@ class CreateGroupUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('groups_user', function (Blueprint $table) {
-            $table->integer('groups_id')->unsigned();
+        Schema::create('group_user', function (Blueprint $table) {
+            $table->integer('group_id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->boolean('is_admin')->default(false);
         });
@@ -27,6 +27,6 @@ class CreateGroupUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('groups_user');
+        Schema::dropIfExists('group_user');
     }
 }
