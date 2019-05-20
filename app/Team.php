@@ -10,7 +10,7 @@ class Team extends Model
     use SoftDeletes;
 
     public $timestamps = true;
-    public $hidden = ['created_at', 'updated_at', 'deleted_at'];
+    public $hidden = ['created_at', 'updated_at', 'deleted_at', 'is_public'];
 
     protected $fillable = ['name', 'is_public'];
 
