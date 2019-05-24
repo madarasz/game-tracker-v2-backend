@@ -18,12 +18,20 @@ class AuthController extends Controller
         $this->request = $request;
     }
 
+    // empty endpoint that the user can ping to verify JWT token and its expiration
+    public function ping() {
+        return response()->json([
+            'message' => 'Your JWT token was accepted.'
+        ], 200);
+    }
+
     protected function jwt(User $user) {
         $payload = [
             'iss' => "gametracker",
             'sub' => $user->id,
             'iat' => time(),
-            'exp' => time() + 10*60
+            'exp' => time() + 60*60*24*30,  // 30 days
+            'is_admin' => $user->is_admin ? 1 : 0
         ];
 
         return JWT::encode($payload, env('JWT_SECRET'));
@@ -49,7 +57,8 @@ class AuthController extends Controller
                 'token' => $this->jwt($user),
                 'userId' => $user->id,
                 'isAdmin' => $user->is_admin,
-                'userName' => $user->name
+                'userName' => $user->name,
+                'imageFile' => $user->image->filename
             ], 200);
         }
 

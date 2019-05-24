@@ -12,6 +12,14 @@ class Group extends Model
     public $timestamps = true;
     public $hidden = ['created_at', 'updated_at', 'deleted_at', 'is_public'];
 
-    protected $fillable = ['name', 'is_public'];
+    protected $fillable = ['name', 'is_public', 'image_id'];
+
+    public function imageFile() {
+        $image = $this->hasOne('App\Image', 'image_id');
+        if (is_null($image)) {
+            return null;
+        }
+        return $image->filename;
+    }
 
 }

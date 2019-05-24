@@ -14,10 +14,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use Authenticatable, Authorizable, SoftDeletes;
 
     public $timestamps = true;
-    protected $fillable = ['name', 'email',];
+    protected $fillable = ['name', 'email', 'image_id'];
     protected $hidden = ['password'];
 
     public function groups() {
         return $this->belongsToMany('App\Group', 'group_user', 'user_id', 'group_id');
-    }    
+    }
+    
+    public function image() {
+        $image = $this->hasOne('App\Image', 'id', 'image_id');
+        if (!$image->exists()) {
+            return null;
+        }
+        return $image;
+    }
 }

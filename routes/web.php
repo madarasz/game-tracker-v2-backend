@@ -24,9 +24,9 @@ $app->get('api/groups', ['uses' => 'GroupController@listGroups']);
 // JWT protected routes
 $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
 
-    // get all users, TODO: this is only an experiment
-    $app->get('api/users', function() {
-        $users = \App\User::all();
-        return response()->json($users);
-    });
+    // to ping with jwt
+    $app->get('api/ping', ['uses' => 'AuthController@ping']);
+    
+    // upload 
+    $app->post('api/image-upload', ['uses' => 'ImageController@uploadImage']);
 });
