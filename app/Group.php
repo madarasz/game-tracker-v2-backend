@@ -22,4 +22,8 @@ class Group extends Model
         return $image->filename;
     }
 
+    public function members() {
+        $this->belongsToMany('App\User', 'group_user', 'group_id', 'user_id');
+    }
+
 }

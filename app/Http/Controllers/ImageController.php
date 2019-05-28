@@ -6,37 +6,16 @@ use Illuminate\Http\Request;
 use App\Image;
 use App\User;
 use App\Group;
+use Exception;
 use Illuminate\Support\Facades\File;
 use Firebase\JWT\JWT;
 use Intervention\Image\Facades\Image as ImageService;
+use Illuminate\Validation\Rule;
 
 class ImageController extends Controller
 {
     function uploadImage(Request $request) {
-
-        // check request
-        if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
-            return response()->json([
-                'error' => 'Request image not provided'
-            ], 400);
-        }
-        if (!$request->has('type') || !$request->has('parent_id')) {
-            return response()->json([
-                'error' => "Request missing 'type' or 'parent_id'"
-            ], 400);
-        }
-
-        $token = $request->header('Authorization');
-        $token = substr($token, 7-strlen($token));
-        $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
-        $userId = $credentials->sub;
-
-        // check authorization
-        if ($request->input('type') == 'image' && $userId != $request->input('parent_id') && $credentials->is_admin != 1) {
-            return response()->json([
-                'error' => 'Not authorized'
-            ], 404);
-        }
+        $credentials = $this->validateRequest($request, true);
 
         $filename = $request->input('type').'-'.$request->input('parent_id').'-'.mt_rand(1000000, 9999999).'.'.$request->image->extension();
         $request->file('image')->move('images', $filename);
@@ -87,5 +66,66 @@ class ImageController extends Controller
             'message' => 'Image uploaded',
             'filename' => $filename
         ]);
+    }
+
+    function removeImage(Request $request) {
+        $this->validateRequest($request, false);
+
+        // find parent
+        $element = NULL;
+        switch ($request->input('type')) {
+            case 'user':
+                $element = User::findOrFail($request->input('parent_id'));
+                break;
+            case 'group':
+                $element = Group::findOrFail($request->input('parent_id'));
+                break;
+        }
+
+        // remove
+        try {
+            $image = Image::findOrFail($element->image_id);
+            // File::delete('public/images/'.$image->$filename);
+            // File::delete('public/images/thumb-'.$image->$filename);
+            $element->update(['image_id' => null]);
+            Image::destroy($element->image_id);
+        } catch(Exception $e) {
+            return response()->json([
+                'error' => "There was a problem with deleting the image"
+            ], 400);
+        }
+
+        return response()->json([
+            'message' => 'Image deleted'
+        ]);
+    }
+
+    protected function validateRequest(Request $request, $isUpload) {
+        $this->validate($request, [
+            'type' => [
+                'required',
+                Rule::in(['user', 'group'])
+            ],
+            'parent_id' => 'required'
+        ]);
+
+        if ($isUpload) {
+            $this->validate($request, ['image' => 'required|file']);
+        }
+
+        $token = $request->header('Authorization');
+        $token = substr($token, 7-strlen($token));
+        $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
+        $userId = $credentials->sub;
+
+        // check authorization
+        if ($request->input('type') == 'user' && $userId != $request->input('parent_id') && $credentials->is_admin != 1) {
+            return response()->json([
+                'error' => 'Not authorized'
+            ], 404);
+        }
+        // TODO for groups
+
+        return $credentials;
     }
 }

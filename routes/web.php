@@ -28,5 +28,8 @@ $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
     $app->get('api/ping', ['uses' => 'AuthController@ping']);
     
     // upload 
-    $app->post('api/image-upload', ['uses' => 'ImageController@uploadImage']);
+    $app->post('api/image', ['uses' => 'ImageController@uploadImage']);
+
+    // remove image 
+    $app->delete('api/image', ['uses' => 'ImageController@removeImage']);
 });

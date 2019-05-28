@@ -22,10 +22,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
     
     public function image() {
-        $image = $this->hasOne('App\Image', 'id', 'image_id');
-        if (!$image->exists()) {
+        return $this->hasOne('App\Image', 'id', 'image_id');
+    }
+
+    public function imageFile() {
+        $image = $this->image;
+        if (is_null($image)) {
             return null;
         }
-        return $image;
+        return $image->filename;
     }
 }
