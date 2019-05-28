@@ -29,7 +29,12 @@ class GroupController extends Controller
         } else {
             // user is logged in
             $user = User::findOrFail($credentials->sub);
-            $myGroups = $user->groups()->get();
+            $myGroups = $user->groups()->get()->map(function($group) {
+                $group['is_admin'] = $group->pivot->is_admin == 1;
+                return $group;
+            })->each(function($group) {
+                unset($group->pivot);
+            });
             $myGroupIds = $myGroups->pluck('id');
             $publicGroups = Group::where('is_public', true)->whereNotIn('id', $myGroupIds)->get();
             $privateGroups = Group::where('is_public', false)->whereNotIn('id', $myGroupIds)->get();

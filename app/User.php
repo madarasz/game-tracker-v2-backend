@@ -18,7 +18,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = ['password'];
 
     public function groups() {
-        return $this->belongsToMany('App\Group', 'group_user', 'user_id', 'group_id');
+        return $this->belongsToMany('App\Group', 'group_user', 'user_id', 'group_id')->withPivot('is_admin');
     }
     
     public function image() {
