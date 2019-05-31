@@ -58,7 +58,7 @@ class AuthController extends Controller
                 'userId' => $user->id,
                 'isAdmin' => $user->is_admin,
                 'userName' => $user->name,
-                'imageFile' => $user->imageFile()
+                'imageFile' => $user->imageFile
             ], 200);
         }
 

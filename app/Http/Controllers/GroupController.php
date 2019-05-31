@@ -30,7 +30,7 @@ class GroupController extends Controller
             // user is logged in
             $user = User::findOrFail($credentials->sub);
             $myGroups = $user->groups()->get()->map(function($group) {
-                $group['is_admin'] = $group->pivot->is_admin == 1;
+                $group['is_group_admin'] = $group->pivot->is_group_admin == 1;
                 return $group;
             });
             $myGroupIds = $myGroups->pluck('id');
@@ -48,7 +48,12 @@ class GroupController extends Controller
 
     // Group details
     function groupDetails(Request $request, $id) {
-        $group = Group::where('id', $id)->with(['creator', 'members'])->get();
+        $group = Group::where('id', $id)->with(['creator'])->first();
+        $members = $group->members()->get()->map(function($group) {
+            $group['is_group_admin'] = $group->pivot->is_group_admin == 1;
+            return $group;
+        });
+        $group['members'] = $members;
         return response()->json($group);
     }
 }
