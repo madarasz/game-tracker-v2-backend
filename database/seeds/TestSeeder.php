@@ -22,7 +22,7 @@ class TestSeeder extends Seeder
         // test admin user
         DB::table('users')->insert([
             'id' => 2,
-            'name' => 'Test User',
+            'name' => 'Test Admin',
             'email' => 'e2e.admin@test.com',
             'is_admin' => true,
             'password' => app('hash')->make('pass')
@@ -31,22 +31,26 @@ class TestSeeder extends Seeder
         DB::table('groups')->insert([
             'id' => 1,
             'name' => 'Public Group A',
-            'is_public' => true
+            'is_public' => true,
+            'created_by' => 1
         ]);
         DB::table('groups')->insert([
             'id' => 2,
             'name' => 'Public Group B',
-            'is_public' => true
+            'is_public' => true,
+            'created_by' => 2
         ]);
         DB::table('groups')->insert([
             'id' => 3,
             'name' => 'Private Group A',
-            'is_public' => false
+            'is_public' => false,
+            'created_by' => 1
         ]);
         DB::table('groups')->insert([
             'id' => 4,
             'name' => 'Private Group B',
-            'is_public' => false
+            'is_public' => false,
+            'created_by' => 2
         ]);
         // team memberships
         DB::table('group_user')->insert([

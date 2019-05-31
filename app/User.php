@@ -15,7 +15,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public $timestamps = true;
     protected $fillable = ['name', 'email', 'image_id'];
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'created_at', 'updated_at', 'deleted_at', 'pivot'];
 
     public function groups() {
         return $this->belongsToMany('App\Group', 'group_user', 'user_id', 'group_id')->withPivot('is_admin');

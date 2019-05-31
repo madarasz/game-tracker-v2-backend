@@ -20,6 +20,8 @@ $app->post('api/auth/login', ['uses' => 'AuthController@authenticateByEmail']);
 
 // get groups
 $app->get('api/groups', ['uses' => 'GroupController@listGroups']);
+// get group details
+$app->get('api/groups/{id}', ['uses' => 'GroupController@groupDetails']);
 
 // JWT protected routes
 $app->group(['middleware' => 'jwt.auth'], function() use ($app) {

@@ -32,8 +32,6 @@ class GroupController extends Controller
             $myGroups = $user->groups()->get()->map(function($group) {
                 $group['is_admin'] = $group->pivot->is_admin == 1;
                 return $group;
-            })->each(function($group) {
-                unset($group->pivot);
             });
             $myGroupIds = $myGroups->pluck('id');
             $publicGroups = Group::where('is_public', true)->whereNotIn('id', $myGroupIds)->get();
@@ -46,5 +44,11 @@ class GroupController extends Controller
             'myGroups' => $myGroups
         ];
         return response()->json($result);
+    }
+
+    // Group details
+    function groupDetails(Request $request, $id) {
+        $group = Group::where('id', $id)->with(['creator', 'members'])->get();
+        return response()->json($group);
     }
 }

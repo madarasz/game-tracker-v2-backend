@@ -21,6 +21,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 $factory->define(App\Group::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->company,
-        'is_public' => $faker->boolean(50)
+        'is_public' => $faker->boolean(50),
+        'created_by' => 2 // test admin
     ];
 });
