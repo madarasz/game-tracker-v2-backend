@@ -23,7 +23,8 @@ class Group extends Model
     }
 
     public function members() {
-        return $this->belongsToMany('App\User', 'group_user', 'group_id', 'user_id')->withPivot('is_group_admin');
+        return $this->belongsToMany('App\User', 'group_user', 'group_id', 'user_id')->withPivot('is_group_admin')
+            ->orderBy('is_admin', 'desc')->orderBy('pivot_is_group_admin', 'desc');
     }
 
     public function getImageFileAttribute() {
