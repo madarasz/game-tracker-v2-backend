@@ -49,7 +49,7 @@ class ImageController extends Controller
         // create Image in DB
         $image = Image::create([
             'filename' => $filename,
-            'uploaded_by' => $credentials->sub
+            'uploaded_by' => $credentials->id
         ]);
 
         // relationships in DB
@@ -113,11 +113,7 @@ class ImageController extends Controller
             $this->validate($request, ['image' => 'required|file']);
         }
 
-        $token = $request->header('Authorization');
-        $token = substr($token, 7-strlen($token));
-        $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
-        $userId = $credentials->sub;
-
+        $userId = $request->user->id;
         // check authorization
         if ($request->input('type') == 'user' && $userId != $request->input('parent_id') && $credentials->is_admin != 1) {
             return response()->json([
@@ -126,6 +122,6 @@ class ImageController extends Controller
         }
         // TODO for groups
 
-        return $credentials;
+        return $request->user;
     }
 }
