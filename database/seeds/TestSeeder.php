@@ -59,6 +59,11 @@ class TestSeeder extends Seeder
             'is_group_admin' => true
         ]);
         DB::table('group_user')->insert([
+            'user_id' => 2,
+            'group_id' => 1,
+            'is_group_admin' => false
+        ]);
+        DB::table('group_user')->insert([
             'user_id' => 1,
             'group_id' => 3,
             'is_group_admin' => false
