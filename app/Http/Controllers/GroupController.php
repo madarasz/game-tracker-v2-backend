@@ -13,23 +13,14 @@ class GroupController extends Controller
     // List all Groups
     function listGroups(Request $request) {
         // user auth
-        $token = $request->header('Authorization');
-        $token = substr($token, 7-strlen($token));
-        $credentials = null;
-        try {
-            $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
-        } catch(Exception $e) {
-            // do nothing           
-        }
-        if (is_null($credentials)) {
+        if (!$request->has('user')) {
             // user is not logged in
             $publicGroups = Group::where('is_public', true)->get();
             $privateGroups = Group::where('is_public', false)->get();
             $myGroups = [ 'error' => 'User not logged in' ];
         } else {
             // user is logged in
-            $user = User::findOrFail($credentials->sub);
-            $myGroups = $user->groups()->get()->map(function($group) {
+            $myGroups = $request->user->groups()->get()->map(function($group) {
                 $group['is_group_admin'] = $group->pivot->is_group_admin == 1;
                 return $group;
             });
@@ -48,6 +39,7 @@ class GroupController extends Controller
 
     // Group details
     function groupDetails(Request $request, $id) {
+        // TODO: Auth for private groups
         $group = Group::where('id', $id)->with(['creator'])->first();
         $members = $group->members()->get()->map(function($group) {
             $group['is_group_admin'] = $group->pivot->is_group_admin == 1;

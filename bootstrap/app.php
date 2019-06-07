@@ -68,10 +68,11 @@ $app->singleton(
 // ]);
 
 $app->routeMiddleware([
-    'jwt.auth' => App\Http\Middleware\JwtMiddleware::class,
+    'jwt.auth' => App\Http\Middleware\JwtGuardMiddleware::class,
 ]);
 $app->middleware([
-    App\Http\Middleware\CorsMiddleware::class
+    App\Http\Middleware\CorsMiddleware::class,
+    App\Http\Middleware\JwtMiddleware::class
  ]);
 
 /*
