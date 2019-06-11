@@ -29,9 +29,15 @@ $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
     // to ping with jwt
     $app->get('api/ping', ['uses' => 'AuthController@ping']);
     
-    // upload 
-    $app->post('api/image', ['uses' => 'ImageController@uploadImage']);
+    // upload image
+    $app->post('api/images', ['uses' => 'ImageController@uploadImage']);
 
     // remove image 
-    $app->delete('api/image', ['uses' => 'ImageController@removeImage']);
+    $app->delete('api/images', ['uses' => 'ImageController@removeImage']);
+
+    // add game
+    $app->post('api/games', ['uses' => 'GameController@addGame']);
+
+    // delete game
+    $app->delete('api/games', ['uses' => 'GameController@deleteGame']);
 });

@@ -39,7 +39,7 @@ class GroupController extends Controller
 
     // Group details
     function groupDetails(Request $request, $id) {
-        $group = Group::where('id', $id)->with(['creator'])->first();
+        $group = Group::where('id', $id)->with(['games'])->first();
 
         // auth for private groups
         $members = $group->members()->get();
@@ -48,6 +48,7 @@ class GroupController extends Controller
                 'error' => 'Not authorized for group details'
             ], 403);
         }
+
         $members = $members->map(function($group) {
             $group['is_group_admin'] = $group->pivot->is_group_admin == 1;
             return $group;

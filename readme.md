@@ -4,7 +4,11 @@
 
 Edit .env configuration. Set JWT_SECRET.
 
-`php artisan key:generate`
+```
+php artisan key:generate
+php artisan migrate
+php artisan db:seed --class=TestSeeder
+```
 
 # Running in dev
 

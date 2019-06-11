@@ -27,6 +27,10 @@ class Group extends Model
             ->orderBy('is_admin', 'desc')->orderBy('pivot_is_group_admin', 'desc');
     }
 
+    public function games() {
+        return $this->belongsToMany('App\Game', 'group_game', 'group_id', 'game_id');
+    }
+
     public function getImageFileAttribute() {
         $image = $this->image;
         if (is_null($image)) {
