@@ -40,4 +40,7 @@ $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
 
     // delete game
     $app->delete('api/games', ['uses' => 'GameController@deleteGame']);
+
+    // update group details
+    $app->put('api/groups/{id}', ['uses' => 'GroupController@updateGroup']);
 });

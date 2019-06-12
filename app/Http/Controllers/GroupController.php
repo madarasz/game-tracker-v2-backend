@@ -56,4 +56,24 @@ class GroupController extends Controller
         $group['members'] = $members;
         return response()->json($group);
     }
+
+    // Update group
+    function updateGroup(Request $request, $id) {
+        $group = Group::where('id', $id)->with(['games'])->first();
+
+        // auth
+        $members = $group->members()->get();
+        if (!$request->user->is_admin && !$members->contains($request->user)) {
+            return response()->json([
+                'error' => 'Not authorized to change group details'
+            ], 403);
+        }
+
+        $group->update([
+            'name' => $request->name,
+            'is_public' => $request->is_public
+        ]);
+
+        return response()->json($group);
+    }
 }

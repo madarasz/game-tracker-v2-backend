@@ -116,12 +116,17 @@ class ImageController extends Controller
 
         $userId = $request->user->id;
         // check authorization
-        if ($request->input('type') == 'user' && $userId != $request->input('parent_id') && $credentials->is_admin != 1) {
+        if ($request->input('type') == 'user' && $userId != $request->input('parent_id') && $request->user->is_admin != 1) {
             return response()->json([
                 'error' => 'Not authorized'
             ], 404);
         }
-        // TODO for groups
+        if ($request->input('type') == 'group' && $request->user->is_admin != 1 && 
+            !\DB::table('group_user')->where('user_id', $userId)->where('group_id', $request->input('parent_id'))->exists()) {
+                return response()->json([
+                    'error' => 'Not authorized'
+                ], 404);
+        }
 
         return $request->user;
     }

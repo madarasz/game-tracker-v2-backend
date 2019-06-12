@@ -10,7 +10,7 @@ class Group extends Model
     use SoftDeletes;
 
     public $timestamps = true;
-    public $hidden = ['created_at', 'updated_at', 'deleted_at', 'is_public', 'image_id', 'image', 'created_by', 'pivot'];
+    public $hidden = ['created_at', 'updated_at', 'deleted_at', 'image_id', 'image', 'created_by', 'pivot'];
     protected $appends = ['imageFile'];
     protected $fillable = ['name', 'is_public', 'image_id', 'created_by'];
 
