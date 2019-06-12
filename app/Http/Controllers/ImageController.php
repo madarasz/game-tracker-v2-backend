@@ -85,10 +85,11 @@ class ImageController extends Controller
         // remove
         try {
             $image = Image::findOrFail($element->image_id);
+            // TODO: remove files from file system
             // File::delete('public/images/'.$image->$filename);
             // File::delete('public/images/thumb-'.$image->$filename);
-            $element->update(['image_id' => null]);
             Image::destroy($element->image_id);
+            $element->update(['image_id' => null]);
         } catch(Exception $e) {
             return response()->json([
                 'error' => "There was a problem with deleting the image"
