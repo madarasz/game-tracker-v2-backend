@@ -29,7 +29,7 @@ $app->get('api/groups/{groupid}/games/{gameid}', ['uses' => 'GameController@game
 $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
 
     // to ping with jwt
-    $app->get('api/ping', ['uses' => 'AuthController@ping']);
+    $app->get('api/auth/ping', ['uses' => 'AuthController@ping']);
     
     // upload image
     $app->post('api/images', ['uses' => 'ImageController@uploadImage']);

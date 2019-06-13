@@ -19,9 +19,10 @@ class AuthController extends Controller
     }
 
     // empty endpoint that the user can ping to verify JWT token and its expiration
-    public function ping() {
+    public function ping(Request $request) {
         return response()->json([
-            'message' => 'Your JWT token was accepted.'
+            'message' => 'Your JWT token was accepted.',
+            'imageFile' => $request->user->imageFile
         ], 200);
     }
 
