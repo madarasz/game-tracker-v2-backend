@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Game;
+use App\Group;
 use Carbon\Carbon;
 
 class GameController extends Controller
 {
+    // create new Game / new Group-Game 
     function addGame(Request $request) {
         // auth check
         if (!$this->authCheck($request)) {
@@ -33,7 +35,7 @@ class GameController extends Controller
         if (\DB::table('group_game')->where('game_id', $request->bgg_id)
             ->where('group_id', $request->group_id)->exists()) {
                 // game already added
-                return response()->json(['error' => 'Game already added to group'], 405);
+                return response()->json(['error' => 'Game is already added to group'], 405);
         } else {
             //create new group-game entry
             $date = new \DateTime();
@@ -47,6 +49,7 @@ class GameController extends Controller
         return response()->json($game);
     }
 
+    // remove Group-Game
     function deleteGame(Request $request) {
         // auth check
         if (!$this->authCheck($request)) {
@@ -60,6 +63,21 @@ class GameController extends Controller
             ->delete();
 
         return response()->json(['message' => 'Game deleted from group']);
+    }
+
+    // get game details
+    function gameDetails(Request $request, $groupid, $gameid) {
+        $group = Group::findOrFail($groupid);
+        $members = $group->members()->get();
+
+        // auth check
+        if (!$group->is_public && (!$request->has('user') || !$request->user->is_admin) && !$members->contains($request->user)) {
+            return response()->json(['error' => 'not authorised'], 403);
+        }
+
+        $game = Game::findOrFail($gameid);
+
+        return response()->json($game);
     }
 
     private function authCheck($request) {
