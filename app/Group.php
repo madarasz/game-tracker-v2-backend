@@ -11,7 +11,7 @@ class Group extends Model
 
     public $timestamps = true;
     public $hidden = ['created_at', 'updated_at', 'deleted_at', 'image_id', 'image', 'created_by', 'pivot'];
-    protected $appends = ['imageFile'];
+    protected $appends = ['imageFile', 'memberCount', 'gameCount'];
     protected $fillable = ['name', 'is_public', 'image_id', 'created_by'];
 
     public function image() {
@@ -37,5 +37,13 @@ class Group extends Model
             return null;
         }
         return $image->filename;
+    }
+
+    public function getMemberCountAttribute() {
+        return $this->members->count();
+    }
+
+    public function getGameCountAttribute() {
+        return $this->games->count();
     }
 }
