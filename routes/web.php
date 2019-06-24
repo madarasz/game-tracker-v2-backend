@@ -25,7 +25,7 @@ $app->get('api/groups/{id}', ['uses' => 'GroupController@groupDetails']);
 // get game details
 $app->get('api/groups/{groupid}/games/{gameid}', ['uses' => 'GameController@gameDetails']);
 
-// JWT protected routes
+// JWT protected routes, only for logged in users
 $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
 
     // to ping with jwt
@@ -45,4 +45,10 @@ $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
 
     // update group details
     $app->put('api/groups/{id}', ['uses' => 'GroupController@updateGroup']);
+
+    // add session
+    $app->post('api/sessions', ['uses' => 'SessionController@addSession']);
+
+    // update session
+    $app->put('api/sessions/{id}', ['uses' => 'SessionController@updateSession']);
 });

@@ -76,6 +76,7 @@ class GameController extends Controller
         }
 
         $game = Game::findOrFail($gameid);
+        $game['sessions'] = $game->sessions($groupid)->get();
 
         return response()->json($game);
     }

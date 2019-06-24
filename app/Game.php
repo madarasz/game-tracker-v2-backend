@@ -16,4 +16,8 @@ class Game extends Model
     public function groups() {
         return $this->belongsToMany('App\Group', 'group_game', 'game_id', 'group_id');
     }
+
+    public function sessions($groupId) {
+        return $this->hasMany('App\Session', 'game_id', 'id')->where('group_id', $groupId)->orderBy('date', 'desc');
+    }
 }
