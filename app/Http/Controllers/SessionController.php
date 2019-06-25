@@ -53,6 +53,22 @@ class SessionController extends Controller
         return response()->json($session);
     }
 
+    // delete game session
+    function deleteSession(Request $request, $id) {
+        $session = Session::findOrFail($id);
+
+        // auth
+        if (!$this->modifyAuthCheck($request, $session)) {
+            return response()->json([
+                'error' => 'Not authorized to delete session'
+            ], 403);
+        }
+
+        $session->delete();
+
+        return response()->json(['message' => 'Session deleted']);
+    }
+
     // allowed for group members and site admins
     private function createAuthCheck(Request $request) {
         $group = Group::findOrFail($request->group_id);

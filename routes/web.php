@@ -51,4 +51,7 @@ $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
 
     // update session
     $app->put('api/sessions/{id}', ['uses' => 'SessionController@updateSession']);
+
+    // delete session
+    $app->delete('api/sessions/{id}', ['uses' => 'SessionController@deleteSession']);
 });

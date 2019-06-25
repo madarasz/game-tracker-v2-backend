@@ -49,11 +49,15 @@ class GroupController extends Controller
             ], 403);
         }
 
+        $group->games->map(function($game) use ($id) {
+            $game['session_count'] = $game->sessions($id)->count();
+        });
         $members = $members->map(function($group) {
             $group['is_group_admin'] = $group->pivot->is_group_admin == 1;
             return $group;
         });
         $group['members'] = $members;
+
         return response()->json($group);
     }
 

@@ -71,8 +71,11 @@ class GameController extends Controller
         $members = $group->members()->get();
 
         // auth check
-        if (!$group->is_public && (!$request->has('user') || !$request->user->is_admin) && !$members->contains($request->user)) {
-            return response()->json(['error' => 'not authorised'], 403);
+        if (!$group->is_public && 
+                (!$request->has('user') || (!$request->user->is_admin && !$members->contains($request->user)))) {
+            return response()->json([
+                'error' => 'not authorised'
+            ], 403);
         }
 
         $game = Game::findOrFail($gameid);
