@@ -95,22 +95,24 @@ class ImageController extends Controller
         }
 
         // remove
-        // try {
+        try {
             $image = Image::findOrFail($element->image_id);
-            // TODO: remove files from file system
+            // remove files from file system
             File::delete('images/'.$image->filename);
             File::delete('images/thumb-'.$image->filename);
+            // remove image from DB
             Image::destroy($element->image_id);
+            // removing reference from DB
             if ($request->input('type') == 'session') {
                 \DB::delete('DELETE FROM session_image WHERE image_id='.$request->input('image_id'));
             } else {
                 $element->update(['image_id' => null]);
             }
-        // } catch(Exception $e) {
-        //     return response()->json([
-        //         'error' => "There was a problem with deleting the image"
-        //     ], 400);
-        // }
+        } catch(Exception $e) {
+            return response()->json([
+                'error' => "There was a problem with deleting the image"
+            ], 400);
+        }
 
         return response()->json([
             'message' => 'Image deleted'
