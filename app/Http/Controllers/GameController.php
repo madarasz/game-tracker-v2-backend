@@ -79,7 +79,7 @@ class GameController extends Controller
         }
 
         $game = Game::findOrFail($gameid);
-        $game['sessions'] = $game->sessions($groupid)->get();
+        $game['sessions'] = $game->sessions($groupid)->with(['images'])->get();
 
         return response()->json($game);
     }

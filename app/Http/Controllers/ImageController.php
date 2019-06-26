@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Image;
 use App\User;
 use App\Group;
+use App\Session;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Firebase\JWT\JWT;
@@ -14,6 +15,7 @@ use Illuminate\Validation\Rule;
 
 class ImageController extends Controller
 {
+    // adds image
     function uploadImage(Request $request) {
         $credentials = $this->validateRequest($request, true);
 
@@ -60,6 +62,12 @@ class ImageController extends Controller
             case 'group':
                 Group::findOrFail($request->input('parent_id'))->update(['image_id' => $image->id]);
                 break;
+            case 'session':
+                \DB::table('session_image')->insert([
+                    'session_id' => $request->input('parent_id'),
+                    'image_id' => $image->id
+                ]);
+                break;
         }
 
         return response()->json([
@@ -68,6 +76,7 @@ class ImageController extends Controller
         ]);
     }
 
+    // removes image
     function removeImage(Request $request) {
         $this->validateRequest($request, false);
 
@@ -80,21 +89,28 @@ class ImageController extends Controller
             case 'group':
                 $element = Group::findOrFail($request->input('parent_id'));
                 break;
+            case 'session':
+                $element = \DB::table('session_image')->where('image_id', $request->input('image_id'))->first();
+                break;
         }
 
         // remove
-        try {
+        // try {
             $image = Image::findOrFail($element->image_id);
             // TODO: remove files from file system
-            // File::delete('public/images/'.$image->$filename);
-            // File::delete('public/images/thumb-'.$image->$filename);
+            File::delete('images/'.$image->filename);
+            File::delete('images/thumb-'.$image->filename);
             Image::destroy($element->image_id);
-            $element->update(['image_id' => null]);
-        } catch(Exception $e) {
-            return response()->json([
-                'error' => "There was a problem with deleting the image"
-            ], 400);
-        }
+            if ($request->input('type') == 'session') {
+                \DB::delete('DELETE FROM session_image WHERE image_id='.$request->input('image_id'));
+            } else {
+                $element->update(['image_id' => null]);
+            }
+        // } catch(Exception $e) {
+        //     return response()->json([
+        //         'error' => "There was a problem with deleting the image"
+        //     ], 400);
+        // }
 
         return response()->json([
             'message' => 'Image deleted'
@@ -105,7 +121,7 @@ class ImageController extends Controller
         $this->validate($request, [
             'type' => [
                 'required',
-                Rule::in(['user', 'group'])
+                Rule::in(['user', 'group', 'session'])
             ],
             'parent_id' => 'required'
         ]);
@@ -116,16 +132,28 @@ class ImageController extends Controller
 
         $userId = $request->user->id;
         // check authorization
-        if ($request->input('type') == 'user' && $userId != $request->input('parent_id') && $request->user->is_admin != 1) {
-            return response()->json([
-                'error' => 'Not authorized'
-            ], 404);
-        }
-        if ($request->input('type') == 'group' && $request->user->is_admin != 1 && 
-            !\DB::table('group_user')->where('user_id', $userId)->where('group_id', $request->input('parent_id'))->exists()) {
-                return response()->json([
-                    'error' => 'Not authorized'
-                ], 404);
+        switch ($request->input('type')) {
+            case 'user':    // is site admin or it's his/her own photo
+                if ($userId != $request->input('parent_id') && $request->user->is_admin != 1) {
+                    return response()->json([
+                        'error' => 'Not authorized'
+                    ], 404);
+                };
+                break;
+            case 'group':   // is site admin or group admin
+                if ($request->user->is_admin != 1 && !\DB::table('group_user')->where('user_id', $userId)->where('group_id', $request->input('parent_id'))->where('is_group_admin', true)->exists()) {
+                    return response()->json([
+                        'error' => 'Not authorized'
+                    ], 404);
+                };
+                break;
+            case 'session': // is site admin or group admin
+                if ($request->user->is_admin != 1 && !\DB::table('group_user')->where('user_id', $userId)->where('group_id', $request->input('parent_id'))->where('is_group_admin', true)->exists()) {
+                    return response()->json([
+                        'error' => 'Not authorized'
+                    ], 404);
+                };
+                break;
         }
 
         return $request->user;
