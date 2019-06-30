@@ -18,6 +18,11 @@ class ImageController extends Controller
     // adds image
     function uploadImage(Request $request) {
         $credentials = $this->validateRequest($request, true);
+        if (!$credentials) {
+            return response()->json([
+                'error' => "Not authorized"
+            ], 403);
+        }
 
         $filename = $request->input('type').'-'.$request->input('parent_id').'-'.mt_rand(1000000, 9999999).'.'.$request->image->extension();
         $request->file('image')->move('images', $filename);
@@ -78,7 +83,12 @@ class ImageController extends Controller
 
     // removes image
     function removeImage(Request $request) {
-        $this->validateRequest($request, false);
+        $credentials = $this->validateRequest($request, false);
+        if (!$credentials) {
+            return response()->json([
+                'error' => "Not authorized"
+            ], 403);
+        }
 
         // find parent
         $element = NULL;
@@ -137,23 +147,17 @@ class ImageController extends Controller
         switch ($request->input('type')) {
             case 'user':    // is site admin or it's his/her own photo
                 if ($userId != $request->input('parent_id') && $request->user->is_admin != 1) {
-                    return response()->json([
-                        'error' => 'Not authorized'
-                    ], 404);
+                    return false;
                 };
                 break;
             case 'group':   // is site admin or group admin
                 if ($request->user->is_admin != 1 && !\DB::table('group_user')->where('user_id', $userId)->where('group_id', $request->input('parent_id'))->where('is_group_admin', true)->exists()) {
-                    return response()->json([
-                        'error' => 'Not authorized'
-                    ], 404);
+                    return false;
                 };
                 break;
-            case 'session': // is site admin or group admin
-                if ($request->user->is_admin != 1 && !\DB::table('group_user')->where('user_id', $userId)->where('group_id', $request->input('parent_id'))->where('is_group_admin', true)->exists()) {
-                    return response()->json([
-                        'error' => 'Not authorized'
-                    ], 404);
+            case 'session': // is site admin or group member
+                if ($request->user->is_admin != 1 && !\DB::table('group_user')->where('user_id', $userId)->where('group_id', $request->input('group_id'))->exists()) {
+                    return false;
                 };
                 break;
         }
