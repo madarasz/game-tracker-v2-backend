@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Session;
+use App\Season;
 use App\Group;
 
 class SessionController extends Controller
@@ -31,7 +32,8 @@ class SessionController extends Controller
             'notes' => $request->notes,
             'place' => $request->place,
             'date' => $request->date,
-            'concluded' => false
+            'concluded' => false,
+            'season_id' => $this->getSeasonId($request)
         ]);
 
         return response()->json($session);
@@ -48,6 +50,7 @@ class SessionController extends Controller
             ], 403);
         }
 
+        $request->merge(['season_id' => $this->getSeasonId($request)]);
         $session->update($request->all());
 
         return response()->json($session);
@@ -80,6 +83,18 @@ class SessionController extends Controller
     private function modifyAuthCheck(Request $request, $session) {
         return $request->user->is_admin || $session->created_by == $request->user->id || 
             \DB::table('group_user')->where('user_id', $request->user->id)->where('group_id', $session->group_id)->where('is_group_admin', true)->exists();
+    }
+
+    // get the appropriate season id for date
+    private function getSeasonId($request) {
+        $season = Season::where('group_id', $request->input('group_id'))->where('game_id', $request->input('game_id'))->where('start_date', '<=', $request->input('date'))
+            ->where('end_date', '>=', $request->input('date'))->first();
+
+        if (is_null($season)) {
+            return null;
+        }
+
+        return $season->id;
     }
 
 }

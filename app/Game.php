@@ -20,4 +20,8 @@ class Game extends Model
     public function sessions($groupId) {
         return $this->hasMany('App\Session', 'game_id', 'id')->where('group_id', $groupId)->orderBy('date', 'desc');
     }
+
+    public function seasons($groupId) {
+        return $this->hasMany('App\Season', 'game_id', 'id')->where('group_id', $groupId)->orderBy('end_date', 'desc');
+    }
 }

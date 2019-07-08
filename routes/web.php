@@ -54,4 +54,13 @@ $app->group(['middleware' => 'jwt.auth'], function() use ($app) {
 
     // delete session
     $app->delete('api/sessions/{id}', ['uses' => 'SessionController@deleteSession']);
+
+    // add season
+    $app->post('api/seasons', ['uses' => 'SeasonController@addSeason']);
+
+    // update season details
+    $app->put('api/seasons/{id}', ['uses' => 'SeasonController@updateSeason']);
+
+    // delete session
+    $app->delete('api/seasons/{id}', ['uses' => 'SeasonController@deleteSeason']);
 });
