@@ -11,7 +11,7 @@ class Group extends Model
 
     public $timestamps = true;
     public $hidden = ['created_at', 'updated_at', 'deleted_at', 'image_id', 'image', 'created_by', 'pivot'];
-    protected $appends = ['imageFile', 'memberCount', 'gameCount'];
+    protected $appends = ['imageFile', 'memberCount', 'gameCount', 'sessionCount'];
     protected $fillable = ['name', 'is_public', 'image_id', 'created_by'];
 
     public function image() {
@@ -45,5 +45,9 @@ class Group extends Model
 
     public function getGameCountAttribute() {
         return $this->games->count();
+    }
+
+    public function getSessionCountAttribute() {
+        return \DB::table('sessions')->where('group_id', $this->id)->count();
     }
 }
